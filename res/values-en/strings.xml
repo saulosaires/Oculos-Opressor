@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Deal With It</string>
+    <string name="action_settings">Settings</string>
+    <string name="shit_happens">Something bad happens!</string>
+    <string name="add_photo">Add Picture</string>
+    <string name="add_glass">Change glasses</string>
+    <string name="save_opression">Save Picture!</string>
+    <string name="app_name_uppercase">DEAL WITH IT !</string>
+	<string name="welcome">Welcome!</string>
+    <string name="gallery_opression">Gallery</string>
+    <string name="picture_saved_msg"> Your picture is on the gallery:</string>
+    <string name="size">Size</string>
+    <string name="turn">Turn</string>
+    <string name="describe_notification">What about deal with it?</string> 
+    <string name="configuration">Configuration</string>  
+    <string name="enable_notification">Enable Notification</string> 
+</resources>

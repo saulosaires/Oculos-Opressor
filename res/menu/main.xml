@@ -1,0 +1,38 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.oculosopressor.MainActivity" >
+
+    <item
+        android:id="@+id/add_glass"
+        android:orderInCategory="1"
+        android:title="@string/add_glass"
+        app:showAsAction="never"/>
+    
+    
+    <item
+        android:id="@+id/photo"
+        android:orderInCategory="1"
+        android:title="@string/add_photo"
+        app:showAsAction="never"/>
+
+     
+    <item
+        android:id="@+id/save_opression"
+        android:orderInCategory="2"
+        android:title="@string/save_opression"
+        app:showAsAction="never"/>    
+
+     
+    <item
+        android:id="@+id/gallery_opression"
+        android:orderInCategory="3"
+        android:title="@string/gallery_opression"
+        app:showAsAction="never"/>    
+    
+    <item
+        android:id="@+id/configuration"
+        android:orderInCategory="4"
+        android:title="@string/configuration"
+        app:showAsAction="never"/>       
+</menu>
