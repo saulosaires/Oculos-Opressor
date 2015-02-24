@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Deal With It</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="shit_happens">E' successo qualcosa di brutto!</string>
+    <string name="add_photo">Aggiungi un'immagine</string>
+    <string name="add_glass">Cambia occhiali</string>
+    <string name="save_opression">Salva l'immagine!</string>
+    <string name="app_name_uppercase">DEAL WITH IT!</string>
+	<string name="welcome">Benvenuto!</string>
+    <string name="gallery_opression">Galleria</string>
+    <string name="picture_saved_msg">La tua immagine si trova nel percorso:</string>
+    <string name="size">Dimensione</string>
+    <string name="turn">Rotazione</string>
+    <string name="describe_notification">Che ne dici di deal with it?</string> 
+    <string name="configuration">Configurazione</string>  
+    <string name="enable_notification">Abilita notifica</string> 
+</resources>
