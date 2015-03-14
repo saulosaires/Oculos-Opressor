@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.oculosopressor"
-    android:versionCode="24"
-    android:versionName="1.23" >
+    android:versionCode="26"
+    android:versionName="1.25" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     
     <application
         android:allowBackup="true"
@@ -44,7 +45,23 @@
         
         
          <receiver android:name="com.oculosopressor.controller.AlarmReciever"/> 
-        
+    
+
+	    <receiver android:name="com.oculosopressor.controller.StartAtBootReceiver" 
+	              android:enabled="true" 
+	              android:exported="false">
+				
+			<intent-filter>
+			    
+				<action android:name="android.intent.action.BOOT_COMPLETED"/>
+				<category android:name="android.intent.category.HOME"/>
+					
+			</intent-filter>
+				
+		</receiver>
+                 
+         
+         
     </application>
 
 </manifest>
