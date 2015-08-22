@@ -20,6 +20,9 @@ public class PreferenceActivity extends ActionBarActivity {
 	String TAG = getClass().getSimpleName();
   
 	public static String PREFS_NAME="Preference";
+	public static String PREFS_NAME_CONTACT="Preference_Contact";
+
+	
 	private FrameLayout mContainer;
 	
 	@Override

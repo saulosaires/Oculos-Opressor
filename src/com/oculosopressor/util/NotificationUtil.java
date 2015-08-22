@@ -16,7 +16,7 @@ import com.oculosopressor.controller.AlarmReciever;
  
 public class NotificationUtil {
 
-	static int[] hours  = {6,12,18,20};  
+	static int[] hours  = {9,12,18,20};  
 							
 	
 	
@@ -51,14 +51,16 @@ public class NotificationUtil {
 	
 	public static void schedulerNotification(Context context){	
 					
+		
+		
 		boolean enable_notification = SharedPreferences.getBoolean(context, "enable_notification",true);
 		
 		if(!enable_notification)return;
 		
 		 Calendar cal = Calendar.getInstance();  
-		 cal.add(Calendar.HOUR_OF_DAY, hours[(int) (Math.random()%3)]); 
-		// cal.add(Calendar.SECOND,10); 
-		 cal.getTime();
+		 cal.add(Calendar.DATE, 1);
+		 cal.set(Calendar.HOUR_OF_DAY, hours[(int) (Math.random()%3)]); 
+		 
  
 		 Intent intentAlarm = new Intent(context, AlarmReciever.class);
 	       
@@ -69,10 +71,6 @@ public class NotificationUtil {
          alarmManager.set(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(), PendingIntent.getBroadcast(context,1,  intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
 		
 	}
-	
-	public static int getNextPeriod(int actual){
-		
-		return (actual+1)%3;
-	}
+ 
  
 }

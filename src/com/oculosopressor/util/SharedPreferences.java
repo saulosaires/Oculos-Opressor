@@ -16,6 +16,17 @@ public class SharedPreferences {
 	    	 return false;
 	    	 
     }
+    public static boolean putBoolean(Context context,String key,boolean value){
+        
+	 	if(context==null) return false;
+	 	
+	 	  return context.getSharedPreferences(PreferenceActivity.PREFS_NAME,Context.MODE_PRIVATE)
+	     .edit()
+	     .putBoolean(key, value)
+	     .commit();
+ 	
+ 	
+    }
 
     public static boolean putValue(Context context,String key,String value){
      

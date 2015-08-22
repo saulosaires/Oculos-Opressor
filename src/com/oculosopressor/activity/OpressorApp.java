@@ -2,12 +2,11 @@ package com.oculosopressor.activity;
 
 import java.util.HashMap;
 
+import android.app.Application;
+ 
+import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.oculosopressor.R;
-
-import android.app.Application;
 
 public class OpressorApp extends Application {
 
@@ -16,6 +15,13 @@ public class OpressorApp extends Application {
 
     public static int GENERAL_TRACKER = 0;
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+  
+    }
+    
     public enum TrackerName {
         APP_TRACKER, // Tracker used only in this app.
         GLOBAL_TRACKER, // Tracker used by all the apps from a company. eg: roll-up tracking.

@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -86,11 +87,13 @@ public class FragmentOpressor extends Fragment implements  View.OnTouchListener,
 
 	public void init(){
 		
+	 
+		
 	    // Consultar o AdView como um recurso e carregar uma solicitação.
 	    AdView adView = (AdView)rootView.findViewById(R.id.topopressor).findViewById(R.id.adView);
 	    AdRequest adRequest = new AdRequest.Builder().build();
 	    adView.loadAd(adRequest);
-		
+ 
 		relativeLayout = (RelativeLayout) rootView.findViewById(R.id.drag_layer);;
 		
 	    esquerdaCaviar = (ImageView) relativeLayout.findViewById(R.id.esquerdaCaviar);

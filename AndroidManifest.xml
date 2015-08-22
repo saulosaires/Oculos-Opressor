@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.oculosopressor"
-    android:versionCode="26"
-    android:versionName="1.25" >
+    android:versionCode="36"
+    android:versionName="1.35" >
 
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="21" />
+    
 	<uses-permission android:name="android.permission.VIBRATE"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />   
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />                            
+    
+    
+    <uses-feature android:name="android.hardware.camera"  android:required="true" />
     
     <application
         android:allowBackup="true"
@@ -59,9 +66,7 @@
 			</intent-filter>
 				
 		</receiver>
-                 
-         
-         
+                          
     </application>
 
 </manifest>

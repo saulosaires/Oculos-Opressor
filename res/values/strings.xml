@@ -14,5 +14,6 @@
     <string name="turn">Girar</string>
     <string name="describe_notification">Que tal uma opressão agora ?</string> 
     <string name="configuration">Configuração</string>     
-    <string name="enable_notification">Habilitar Notificações</string>       
+    <string name="enable_notification">Habilitar Notificações</string>     
+    <string name="share">Compartilhar</string>         
 </resources>

@@ -15,4 +15,5 @@
     <string name="describe_notification">What about deal with it?</string> 
     <string name="configuration">Configuration</string>  
     <string name="enable_notification">Enable Notification</string> 
+    <string name="share">Share</string>   
 </resources>
